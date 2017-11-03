@@ -11,6 +11,7 @@ int main(int argc, char *argv[])
 	{
 		std::string s(*++argv);
 		Polynomial pol(s);
+		pol.retriveSigns();
 		pol.groupTerms();
 		std::cout << "You have the required arguments\n";
 	}

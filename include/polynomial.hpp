@@ -12,12 +12,19 @@ class Polynomial
 {
 	private:
 		std::string		_expression;
-		std::string		_plus;
-		std::string		_minus;
-		std::string		_equals;
+		std::size_t		_plus;
+		std::size_t		_minus;
+		std::size_t		_equals;
+		std::string		_sign;
+		int				_pos;
 
-		std::vector<std::string> _terms;
+		std::vector<std::string> _unsortedTerms;
+		std::vector<std::string> _sortedTerms;
+		std::vector<std::string> _signs;
 		Polynomial();
+		void	checkSignOfFirstTerm(void);
+		void	checkSignAfterEqual(int pos);
+		void	removeSpaces(void);
 
 	public:
 		Polynomial(std::string expre);

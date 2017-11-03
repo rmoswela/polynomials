@@ -3,6 +3,7 @@
 Polynomial::Polynomial(std::string expression)
 {
 	this->_expression = expression;
+	removeSpaces();
 }
 
 Polynomial::Polynomial(Polynomial const & target)
@@ -21,19 +22,55 @@ Polynomial	&	Polynomial::operator=(Polynomial const & target)
 Polynomial::~Polynomial()
 {}
 
+void		Polynomial::removeSpaces(void)
+{
+	this->_expression.erase(std::remove(this->_expression.begin(), this->_expression.end(), ' '), this->_expression.end());
+	std::cout << "expression without spaces = " << this->_expression << std::endl;
+}
+
+void		Polynomial::checkSignOfFirstTerm(void)
+{
+	if (this->_expression.at(0) == '-')
+		this->_signs.push_back("-");
+	else
+		this->_signs.push_back("+");
+}
+
+void		Polynomial::checkSignAfterEqual(int pos)
+{
+	if (this->_expression.at(pos) == '-')
+		this->_signs.push_back("-");
+	else
+		this->_signs.push_back("+");
+}
 
 void		Polynomial::retriveSigns(void)
 {
-	std::size_t plus = this->_expression.find("+");
-	std::size_t minus = this->_expression.find("-");
-	std::size_t equals = this->_expression.find("=");
 
-	if (plus != std::string::npos)
-		this->_plus = plus;
-	else if (minus != std::string::npos)
-		this->_minus = minus;
-	else if (equals != std::string::npos)
-		this->_equals = equals;
+	for (std::string::iterator it = this->_expression.begin(); it != this->_expression.end(); ++it)
+	{
+		if (std::distance(this->_expression.begin(), it) == 0)
+			checkSignOfFirstTerm();
+		else
+		{
+			this->_sign = *it;
+			if (this->_sign.compare("+") == 0)
+				this->_signs.push_back("+");
+			else if (this->_sign.compare("-") == 0)
+				this->_signs.push_back("-");
+			else if (this->_sign.compare("=") == 0)
+			{
+				this->_signs.push_back("=");
+				it++;
+				checkSignAfterEqual(std::distance(this->_expression.begin(), it));
+			}
+		}
+	}
+
+	for(std::vector<std::string>::iterator it = this->_signs.begin(); it != this->_signs.end(); ++it)
+	{
+		std::cout << "signs found = " << *it << std::endl;
+	}
 }
 
 /*
@@ -48,14 +85,39 @@ void		Polynomial::groupTerms(void)
 	while (token != NULL)
 	{
 		std::cout << "token string = " << token << std::endl;
-		this->_terms.push_back(token);
+		this->_unsortedTerms.push_back(token);
 		token = std::strtok(NULL, "+-=");
 	}
 
 
-	for (std::vector<std::string>::iterator it = this->_terms.begin(); it != this->_terms.end(); ++it)
+		std::string temp;
+		int pos;
+
+	for (std::vector<std::string>::iterator it = this->_unsortedTerms.begin(); it != this->_unsortedTerms.end(); ++it)
 	{
-		std::cout << "token in vector = " << *it << std::endl;
+		this->_sign = *it;
+		pos = std::distance(this->_unsortedTerms.begin(), it);
+		if (this->_signs.at(pos).compare("=") != 0)
+		{
+			temp = this->_signs.at(pos) + this->_sign;
+			std::cout << "sign = " << this->_signs.at(pos) << std::endl;
+			std::cout <<  "temp = " << temp << std::endl;
+			this->_sortedTerms.push_back(temp);
+		}
+		else
+		{
+			pos += 1;
+			temp = this->_signs.at(pos) + this->_sign;
+			std::cout << "sign = " << this->_signs.at(pos) << std::endl;
+			std::cout <<  "temp = " << temp << std::endl;
+			this->_sortedTerms.push_back(temp);
+		}
+		//std::cout << "token in vector = " << *it << std::endl;
+	}
+
+	for(std::vector<std::string>::iterator it = this->_sortedTerms.begin(); it != this->_sortedTerms.end(); ++it)
+	{
+		std::cout << "sorted terms = " << *it << std::endl;
 	}
 }
 
