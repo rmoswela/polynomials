@@ -7,6 +7,7 @@
 #include <iostream>
 #include <regex>
 #include <vector>
+#include <algorithm>
 
 class Polynomial
 {
@@ -33,9 +34,12 @@ class Polynomial
 		~Polynomial();
 
 		void	retriveSigns(void);
+		void	tokenizeTerms(void);
 		void	groupTerms(void);
 		void	validatePolynomial(void);
+		void	sortPolynomialExpression(void);
 		void	getDegreeOfPolynomial(void);
+		void	getDiscriminant(void);
 		void	reducePolynomial(void);
 		void	solvePolynomial(void);
 };

@@ -46,7 +46,6 @@ void		Polynomial::checkSignAfterEqual(int pos)
 
 void		Polynomial::retriveSigns(void)
 {
-
 	for (std::string::iterator it = this->_expression.begin(); it != this->_expression.end(); ++it)
 	{
 		if (std::distance(this->_expression.begin(), it) == 0)
@@ -74,9 +73,9 @@ void		Polynomial::retriveSigns(void)
 }
 
 /*
- * function to group like terms of the expression
+ * function to split the expression into terms
  */
-void		Polynomial::groupTerms(void)
+void		Polynomial::tokenizeTerms(void)
 {
 	char *express = new char[this->_expression.length()+1];
 	std::strcpy(express, this->_expression.c_str());
@@ -89,7 +88,10 @@ void		Polynomial::groupTerms(void)
 		token = std::strtok(NULL, "+-=");
 	}
 
+}
 
+void		Polynomial::groupTerms(void)
+{
 		std::string temp;
 		int pos;
 
@@ -115,17 +117,77 @@ void		Polynomial::groupTerms(void)
 		//std::cout << "token in vector = " << *it << std::endl;
 	}
 
-	for(std::vector<std::string>::iterator it = this->_sortedTerms.begin(); it != this->_sortedTerms.end(); ++it)
-	{
-		std::cout << "sorted terms = " << *it << std::endl;
-	}
 }
 
 void		Polynomial::validatePolynomial(void)
-{}
+{
+	std::regex validator("((\\+|-)?[0-9]+)(\\.([0-9]+))?((\\*)([a-zA-Z]+)(\\^)([0-9]))?");
+
+	for(std::vector<std::string>::iterator it = this->_sortedTerms.begin(); it != this->_sortedTerms.end(); ++it)
+	{
+		std::cout << "sorted terms = " << *it << std::endl;
+		if (regex_match(*it, validator))
+			std::cout << "validated " << *it << std::endl;
+		else
+			std::cout << "failed to validate " << *it << " throw exception here" << std::endl;
+	}
+
+}
+
+void		Polynomial::sortPolynomialExpression(void)
+{
+	std::vector<std::string> temp;
+	std::string tempIt;
+	std::vector<std::string>::reverse_iterator rit = this->_sortedTerms.rbegin();
+
+	for(std::vector<std::string>::iterator it = this->_sortedTerms.begin(); it != this->_sortedTerms.end(); ++it)
+	{
+		tempIt = *it;
+		std::reverse(tempIt.begin(), tempIt.end());
+		temp.push_back(tempIt);
+		std::cout << "reversed terms = " << tempIt << std::endl;
+	}
+	std::sort(temp.begin(), temp.end());
+
+  	for (size_t length = 0 ; rit!= this->_sortedTerms.rend(); ++rit)
+  	{
+  		tempIt = temp.at(length);
+  		std::reverse(tempIt.begin(), tempIt.end());
+    	*rit = tempIt;
+    	length++;
+  	}
+
+  	for(std::vector<std::string>::iterator it = this->_sortedTerms.begin(); it != this->_sortedTerms.end(); ++it)
+	{
+		std::cout << "reuben = " << *it << std::endl;
+	}
+
+	for(std::vector<std::string>::iterator it = temp.begin(); it != temp.end(); ++it)
+		std::cout << "sorted terms = " << *it << std::endl;
+}
 
 void		Polynomial::getDegreeOfPolynomial(void)
 {
+	std::string charToFind = "^";
+	std::string degree;
+	std::size_t found = this->_sortedTerms.at(0).find(charToFind);
+	if (found != std::string::npos)
+	{
+		degree = this->_sortedTerms.at(0).at(found+1);
+		std::cout << "degree of polynomial = " << degree << std::endl;
+		getDiscriminant(degree);
+	}
+	else
+		std::cout << "degree of polynomial = 0 " << std::endl;
+}
+
+void		Polynomial::getDiscriminant(std::string degree)
+{
+	int num = std::stoi(degree);
+	if (num == 2)
+	{
+		int a = this->_sortedTerms.at(0).at(1);
+	}
 }
 
 void		Polynomial::reducePolynomial(void)

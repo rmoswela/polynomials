@@ -9,10 +9,14 @@ int main(int argc, char *argv[])
 	}
 	else
 	{
-		std::string s(*++argv);
-		Polynomial pol(s);
+		std::string argument(*++argv);
+		Polynomial pol(argument);
 		pol.retriveSigns();
+		pol.tokenizeTerms();
 		pol.groupTerms();
+		pol.validatePolynomial();
+		pol.sortPolynomialExpression();
+		pol.getDegreeOfPolynomial();
 		std::cout << "You have the required arguments\n";
 	}
 	return 0;
