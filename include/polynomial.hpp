@@ -8,6 +8,8 @@
 #include <regex>
 #include <vector>
 #include <algorithm>
+#include <iomanip>
+#include <math.h>
 
 class Polynomial
 {
@@ -26,6 +28,10 @@ class Polynomial
 		void	checkSignOfFirstTerm(void);
 		void	checkSignAfterEqual(int pos);
 		void	removeSpaces(void);
+		int		solveDiscriminant(std::vector<std::string> v);
+		void	getDiscriminant(std::string degree);
+		void	getTheSameDegreeTerms(std::vector<std::string> temp);
+		void	displayDiscriminant(int discriminant);
 
 	public:
 		Polynomial(std::string expre);
@@ -39,7 +45,6 @@ class Polynomial
 		void	validatePolynomial(void);
 		void	sortPolynomialExpression(void);
 		void	getDegreeOfPolynomial(void);
-		void	getDiscriminant(void);
 		void	reducePolynomial(void);
 		void	solvePolynomial(void);
 };

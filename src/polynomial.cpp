@@ -148,6 +148,7 @@ void		Polynomial::sortPolynomialExpression(void)
 		std::cout << "reversed terms = " << tempIt << std::endl;
 	}
 	std::sort(temp.begin(), temp.end());
+	getTheSameDegreeTerms(temp);
 
   	for (size_t length = 0 ; rit!= this->_sortedTerms.rend(); ++rit)
   	{
@@ -181,12 +182,121 @@ void		Polynomial::getDegreeOfPolynomial(void)
 		std::cout << "degree of polynomial = 0 " << std::endl;
 }
 
+void		Polynomial::displayDiscriminant(int discriminant)
+{
+	if (discriminant > 0)
+		std::cout << "the discriminant is positive " << discriminant<< " and two solutions are = " << std::endl;
+	else if (discriminant < 0)
+		std::cout << "the discriminant is negative " << discriminant << " and the imaginary solution is = " << std::endl;
+	else
+		std::cout << "the discriminant is zero " << discriminant << " the one solution is = "<< std::endl;
+}
+
 void		Polynomial::getDiscriminant(std::string degree)
 {
 	int num = std::stoi(degree);
+	std::size_t found;
+	std::vector<std::string> tempVec;
+	int discriminant; 
+	std::string temp, str_num;
+
 	if (num == 2)
 	{
-		int a = this->_sortedTerms.at(0).at(1);
+		for(std::vector<std::string>::iterator it = this->_sortedTerms.begin(); it != this->_sortedTerms.end(); ++it)
+		{
+			temp = *it;
+			found = temp.find("*");
+			if (found != std::string::npos)
+			{
+				str_num = temp.substr(0, found - 0);
+				tempVec.push_back(str_num);
+			}
+		}
+		discriminant = solveDiscriminant(tempVec);
+		displayDiscriminant(discriminant);
+	}
+}
+
+int 		Polynomial::solveDiscriminant(std::vector<std::string> v)
+{
+	float a, b, c;
+
+	a = std::stof(v.at(0));
+
+	if (!v.at(1).empty())
+		b = std::stof(v.at(1));
+	else
+		b = 0;
+	if (!v.at(2).empty())
+		c = std::stof(v.at(2));
+	else
+		c = 0;
+	std::cout << "a = " << a << std::endl;
+	std::cout << "b = " << b << std::endl;
+	std::cout << "c = " << c << std::endl;
+	return (b * b) - (4 * (a * c));
+}
+
+void		Polynomial::getTheSameDegreeTerms(std::vector<std::string> temp)
+{
+	std::size_t found;
+	std::string tempStr, firstPartOfTerm, lastPartOfTerm, firstTerm, secondTerm, totalTerm;
+	int count;
+	float firstNum, secondNum, total;
+	std::vector<std::string> vec;
+	count = 0;
+
+	for(std::vector<std::string>::iterator it = temp.begin(); it != temp.end(); ++it)
+	{
+		tempStr = *it;
+		found = tempStr.find("*");
+
+		std::cout << "firstPartOfTerm = " << firstPartOfTerm << std::endl;
+		std::cout << "lastPartOfTerm = " << lastPartOfTerm << std::endl;
+		std::cout << "tempStr = " << tempStr << std::endl;
+		//std::cout << "count = " << count << std::endl;
+
+		if (count >= 1 && found != std::string::npos)
+		{
+			if (firstPartOfTerm.compare(tempStr.substr(0, found - 0)) == 0)
+			{
+				firstTerm = tempStr.substr(found+1);
+
+				std::cout << "numbers to add = " <<  firstTerm << std::endl;
+				std::cout << "numbers to add = " << lastPartOfTerm << std::endl;
+				reverse(firstTerm.begin(),firstTerm.end());
+				reverse(lastPartOfTerm.begin(),lastPartOfTerm.end());
+
+				std::cout << "numbers to add after rev = " <<  firstTerm << std::endl;
+				std::cout << "numbers to add after rev = " <<  lastPartOfTerm << std::endl;
+				firstNum = stof(firstTerm);
+				secondNum = stof(lastPartOfTerm);
+				total = firstNum + secondNum;
+				total = floor(total + 0.5);
+				std::cout << "total after rounding = " << total << std::endl;
+				totalTerm = std::to_string(total);
+				std::cout << "totalTerm = " <<  totalTerm << std::endl;
+				reverse(totalTerm.begin(),totalTerm.end());
+				if (total > 0)
+					totalTerm = firstPartOfTerm + "*" + totalTerm + "+";
+				else
+					totalTerm = firstPartOfTerm + "*" + totalTerm + "-";
+				std::cout << "totalTerm after reversing = " <<  totalTerm << std::endl;
+				std::cout << "numbers to add after converting = " <<  firstNum << std::endl;
+				std::cout << "numbers to add after converting = " <<  secondNum << std::endl;
+				std::cout << "numbers to add after converting = " <<  total << std::endl;
+
+			}
+			vec.push_back(tempStr);
+		}
+
+		if (found != std::string::npos)
+		{
+			firstPartOfTerm = tempStr.substr(0, found - 0);
+			lastPartOfTerm = tempStr.substr(found+1);
+		}
+		std::cout << "count = " << count << std::endl;
+		count++;
 	}
 }
 
