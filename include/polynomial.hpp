@@ -15,9 +15,8 @@ class Polynomial
 {
 	private:
 		std::string		_expression;
-		std::size_t		_plus;
-		std::size_t		_minus;
-		std::size_t		_equals;
+		std::string		_degreeOfPol;
+		float			_a, _b, _c;
 		std::string		_sign;
 		int				_pos;
 
@@ -30,7 +29,7 @@ class Polynomial
 		void	removeSpaces(void);
 		int		solveDiscriminant(std::vector<std::string> v);
 		void	getDiscriminant(std::string degree);
-		void	getTheSameDegreeTerms(std::vector<std::string> temp);
+		std::vector<std::string>	getTheSameDegreeTerms(std::vector<std::string> temp);
 		void	displayDiscriminant(int discriminant);
 
 	public:
@@ -46,7 +45,11 @@ class Polynomial
 		void	sortPolynomialExpression(void);
 		void	getDegreeOfPolynomial(void);
 		void	reducePolynomial(void);
+		void	factorsOfAConstant(void);
 		void	solvePolynomial(void);
+		void	degreeOfTwo();
+		void	degreeOfOne();
+		void	degreeOfZero();
 };
 
 #endif
