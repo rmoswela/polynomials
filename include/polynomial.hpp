@@ -16,7 +16,7 @@ class Polynomial
 	private:
 		std::string		_expression;
 		std::string		_degreeOfPol;
-		float			_a, _b, _c;
+		float			_a, _b, _c, _y1, _y2;
 		std::string		_sign;
 		int				_pos;
 

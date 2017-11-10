@@ -192,6 +192,7 @@ void		Polynomial::getDiscriminant(std::string degree)
 
 	if (num == 2)
 	{
+		int count = 0;
 		for(std::vector<std::string>::iterator it = this->_sortedTerms.begin(); it != this->_sortedTerms.end(); ++it)
 		{
 			temp = *it;
@@ -201,7 +202,9 @@ void		Polynomial::getDiscriminant(std::string degree)
 				str_num = temp.substr(0, found - 0);
 				tempVec.push_back(str_num);
 			}
+			count++;
 		}
+		std::cout << "count = " << count << std::endl;
 		discriminant = solveDiscriminant(tempVec);
 		displayDiscriminant(discriminant);
 	}
@@ -209,16 +212,24 @@ void		Polynomial::getDiscriminant(std::string degree)
 
 int 		Polynomial::solveDiscriminant(std::vector<std::string> v)
 {
+	int vecSize = v.size();
+	std::cout << "size = " << vecSize << std::endl;
 	_a = std::stof(v.at(0));
 
 	if (!v.at(1).empty())
 		_b = std::stof(v.at(1));
 	else
 		_b = 0;
-	if (!v.at(2).empty())
-		_c = std::stof(v.at(2));
+	std::cout << "b = " << _b << std::endl;
+
+	if (vecSize == 3)
+		if (!v.at(2).empty())
+			_c = std::stof(v.at(2));
+		else
+			_c = 0;
 	else
-		_c = 0;
+		_c= 0;
+	std::cout << "b = " << _c << std::endl;
 	std::cout << "a = " << _a << std::endl;
 	std::cout << "b = " << _b << std::endl;
 	std::cout << "c = " << _c << std::endl;
@@ -268,7 +279,7 @@ std::vector<std::string>		Polynomial::getTheSameDegreeTerms(std::vector<std::str
 				if (total > 0)
 					totalTerm = firstPartOfTerm + "*" + totalTerm + "+";
 				else
-					totalTerm = firstPartOfTerm + "*" + totalTerm + "-";
+					totalTerm = firstPartOfTerm + "*" + totalTerm;
 				std::cout << "totalTerm after reversing = " <<  totalTerm << std::endl;
 				std::cout << "numbers to add after converting = " <<  firstNum << std::endl;
 				std::cout << "numbers to add after converting = " <<  secondNum << std::endl;
@@ -299,7 +310,14 @@ std::vector<std::string>		Polynomial::getTheSameDegreeTerms(std::vector<std::str
 }
 
 void		Polynomial::reducePolynomial(void)
-{}
+{
+	std::string reducedform = "Reduced Form : ";
+	for(std::vector<std::string>::iterator it = _sortedTerms.begin(); it != _sortedTerms.end(); ++it)
+		reducedform = reducedform + " " + *it;
+	reducedform = reducedform + " = 0";
+	
+	std::cout << reducedform << std::endl;
+}
 
 void		Polynomial::degreeOfTwo(void)
 {}
@@ -311,7 +329,10 @@ void		Polynomial::degreeOfZero(void)
 {}
 
 void		Polynomial::factorsOfAConstant(void)
-{}
+{
+	/*for(int i = 0 i < _b; i++)
+	{}*/
+}
 
 void		Polynomial::solvePolynomial(void)
 {
