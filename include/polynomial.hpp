@@ -19,6 +19,7 @@ class Polynomial
 		float			_a, _b, _c, _y1, _y2;
 		std::string		_sign;
 		int				_pos;
+		int 			_discriminant;
 
 		std::vector<std::string> _unsortedTerms;
 		std::vector<std::string> _sortedTerms;
@@ -27,10 +28,12 @@ class Polynomial
 		void	checkSignOfFirstTerm(void);
 		void	checkSignAfterEqual(int pos);
 		void	removeSpaces(void);
-		int		solveDiscriminant(std::vector<std::string> v);
+		int		solveDiscriminant(std::vector<std::string> v, bool flag);
 		void	getDiscriminant(std::string degree);
 		std::vector<std::string>	getTheSameDegreeTerms(std::vector<std::string> temp);
-		void	displayDiscriminant(int discriminant);
+		void	displayDiscriminant(void);
+		void	inverseOperation(void);
+		float	calculateRoot(float num);
 
 	public:
 		Polynomial(std::string expre);
