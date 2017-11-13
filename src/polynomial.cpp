@@ -221,7 +221,7 @@ void		Polynomial::getDiscriminant(std::string degree)
 	}
 }
 
-int 		Polynomial::solveDiscriminant(std::vector<std::string> v, bool flag)
+float 		Polynomial::solveDiscriminant(std::vector<std::string> v, bool flag)
 {
 	int vecSize = v.size();
 	std::cout << "vecSize = " << vecSize << std::endl;
@@ -359,7 +359,7 @@ void		Polynomial::degreeOfTwo(void)
 	if (length == 2)
 		inverseOperation();
 	else if (length == 3)
-		;
+		factorsOfAConstant();
 }
 
 void		Polynomial::inverseOperation(void)
@@ -370,12 +370,25 @@ void		Polynomial::inverseOperation(void)
 	std::string temp;
 	float divisor, dividend, num;
 	int count = 0;
+	int sign;
+
 	for(std::vector<std::string>::iterator it = _sortedTerms.begin(); it != _sortedTerms.end(); ++it)
-	{
+	{		
+		temp = *it;
+		found = temp.find("^");
+		if (temp.at(0) == '+' && temp.at(found+1) == '0'){
+			temp.replace(0, 1, "-");
+			sign = -1;
+		}
+		else if (temp.at(0) == '-' && temp.at(found+1) == '0'){
+			temp.replace(0, 1, "+");
+			sign = 1;
+		}
+
 		if (count != 1)
-			step1 = step1 + *it + " = ";
+			step1 = step1 + temp + " = ";
 		else
-			step1 = step1 + *it;
+			step1 = step1 + temp;
 		count++;
 	}
 	std::cout << step1 << std::endl;
@@ -389,16 +402,21 @@ void		Polynomial::inverseOperation(void)
 		{
 			hold = temp.substr(found+1);
 			divisor = std::stof(temp.substr(0, found - 0));
+			step2 = temp.substr(0, found - 0) + step2;
 			step2 = " / " + temp.substr(0, found - 0);
 		}
 		else
 		{
 			dividend = std::stof(temp.substr(0, found - 0));
+			if (sign == -1)
+				temp.replace(0, 1, "-");
+			else
+				temp.replace(0, 1, "+");
 			step2 = temp.substr(0, found - 0) + step2;
 		}
 		count++;
 	}
-	num = dividend / divisor;
+	num = (sign * dividend) / divisor;
 	std::cout << "Step 2: " << hold << " = " <<step2 << std::endl;
 	std::cout << "Step 3: " << "√"<< hold << " = √" << std::setprecision(4) << num << std::endl;
 	std::cout << "discriminant = " << _discriminant << std::endl;
@@ -419,20 +437,21 @@ void		Polynomial::inverseOperation(void)
 	}
 }
 
-float		Polynomial::calculateRoot(float num)
+float		Polynomial::calculateRoot(float number)
 {
-	float root;
-	for ( int i = 1 ; i < num/2 ; i++ )
-	{
-  	 if (( num/i)/i == 1)
-   	 	root = i;
-	}
+	float error = 0.00001; //define the precision of your result
+    float root = number;
+
+    while ((root - number / root) > error) //loop until precision satisfied 
+        root = (root + number / root) / 2;
+	
 	std::cout << "The Square root is: " << std::setprecision(3) << root << std::endl;
-	return root;
+    return root;
 }
 
 void		Polynomial::degreeOfOne(void)
 {
+	int sign;
 	std::size_t found;
 	std::string step1 = "Step 1: ";
 	std::string step2;
@@ -442,10 +461,21 @@ void		Polynomial::degreeOfOne(void)
 
 	for(std::vector<std::string>::iterator it = _sortedTerms.begin(); it != _sortedTerms.end(); ++it)
 	{
+		temp = *it;
+		found = temp.find("^");
+		if (temp.at(0) == '+' && temp.at(found+1) == '0'){
+			temp.replace(0, 1, "-");
+			sign = -1;
+		}
+		else if (temp.at(0) == '-' && temp.at(found+1) == '0'){
+			temp.replace(0, 1, "+");
+			sign = 1;
+		}
+
 		if (count != 1)
-			step1 = step1 + *it + " = ";
+			step1 = step1 + temp + " = ";
 		else
-			step1 = step1 + *it;
+			step1 = step1 + temp;
 		count++;
 	}
 	std::cout << step1 << std::endl;
@@ -458,17 +488,21 @@ void		Polynomial::degreeOfOne(void)
 		if (count != 1)
 		{
 			divisor = std::stof(temp.substr(0, found - 0));
-			step2 = " / " + temp.substr(0, found - 0);
+			step2 =  " / " + temp.substr(0, found - 0);
 		}
 		else
 		{
 			dividend = std::stof(temp.substr(0, found - 0));
+			if (sign == -1)
+				temp.replace(0, 1, "-");
+			else
+				temp.replace(0, 1, "+");
 			step2 = temp.substr(0, found - 0) + step2;
 		}
 		count++;
 	}
 	std::cout << "Step 2: " << step2 << std::endl;
-	num = dividend / divisor;
+	num = (sign * dividend) / divisor;
 	std::cout << "Solution: \n"; 
 	std::cout << std::setprecision(3) << num << std::endl;
 }
@@ -492,8 +526,58 @@ void		Polynomial::degreeOfZero(void)
 
 void		Polynomial::factorsOfAConstant(void)
 {
-	/*for(int i = 0 i < _b; i++)
-	{}*/
+	/*int length, count, i, sign;
+	float mul, add, sub;
+	std::vector<int> vec;
+
+	sign = _c < 0 ? -1 : 1;
+	std::cout << "sign = " << sign << std::endl;
+	int c = static_cast<int>(_c);
+
+    std::cout << "Factors of " << _c << " are: " << std::endl;  
+    for(i = 1; i <= c; ++i)
+    {
+        if(c % i == 0)
+        {
+            vec.push_back(i);
+            std::cout << i << std::endl;
+        }
+    }
+
+    length = vec.size();
+    std::cout << "length = " << length << std::endl;
+    i = 0;
+    count = 0;
+    while(i < length)
+    {
+        for(std::vector<int>::iterator it = vec.begin(); it != vec.end(); ++it)
+        {
+            mul = (vec.at(i) * *it);
+            add = (vec.at(i) + *it);
+            sub = (vec.at(i) - *it);
+            std::cout << "addition = " << add << std::endl;
+            std::cout << "multiplication = " << mul << std::endl;
+            std::cout << "subtraction = " << sub << std::endl;
+            if (mul == _c && (add == _b || sub == _b))
+            {
+                std::cout << "i got you " << vec.at(i) << " and " << *it << std::endl;
+                count++;
+                break;
+            }
+        }
+
+        if (count == 1)
+            break;
+        i++;
+    }*/
+
+    float x1, x2;
+
+    x1 = ((-1 * _b) + (calculateRoot(_discriminant))) / (2 * _a);
+    x2 = ((-1 * _b) - (calculateRoot(_discriminant))) / (2 * _a);
+    std::cout << "fucking solution is \n";
+    std::cout << x1 << std::endl;
+    std::cout << x2 << std::endl;
 }
 
 void		Polynomial::solvePolynomial(void)
