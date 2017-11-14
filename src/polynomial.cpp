@@ -25,7 +25,7 @@ Polynomial::~Polynomial()
 void		Polynomial::removeSpaces(void)
 {
 	this->_expression.erase(std::remove(this->_expression.begin(), this->_expression.end(), ' '), this->_expression.end());
-	std::cout << "expression without spaces = " << this->_expression << std::endl;
+	//std::cout << "expression without spaces = " << this->_expression << std::endl;
 }
 
 void		Polynomial::checkSignOfFirstTerm(void)
@@ -64,11 +64,6 @@ void		Polynomial::retriveSigns(void)
 				checkSignAfterEqual(std::distance(this->_expression.begin(), it));
 			}
 		}
-	}
-
-	for(std::vector<std::string>::iterator it = this->_signs.begin(); it != this->_signs.end(); ++it)
-	{
-		std::cout << "signs found = " << *it << std::endl;
 	}
 }
 
@@ -119,16 +114,72 @@ void		Polynomial::groupTerms(void)
 
 void		Polynomial::validatePolynomial(void)
 {
+	float first = 0;
+	float sec = 0;
+	float third = 0;
+	float fouth = 0;
+	bool flag = false;
+	std::string temp;
+	std::size_t found;
 	std::regex validator("((\\+|-)?[0-9]+)(\\.([0-9]+))?((\\*)([a-zA-Z]+)(\\^)([0-9]))?");
+	std::vector<std::string> v = this->_sortedTerms;
 
-	for(std::vector<std::string>::iterator it = this->_sortedTerms.begin(); it != this->_sortedTerms.end(); ++it)
+	for(std::vector<std::string>::iterator it = v.begin(); it != v.end(); ++it)
 	{
-		std::cout << "sorted terms = " << *it << std::endl;
-		if (!regex_match(*it, validator))
+		//std::cout << "sorted terms = " << *it << std::endl;
+		if (!regex_match(*it, validator)){
 			std::cout << "failed to validate " << *it << " throw exception here" << std::endl;
-		//else
-			//std::cout << "validated " << *it << std::endl;
+			exit(0);
+		}
 	}
+
+	this->_sortedTerms.erase (this->_sortedTerms.begin(), this->_sortedTerms.end());
+	for(std::vector<std::string>::iterator it = v.begin(); it != v.end(); ++it)
+	{
+		temp = *it;
+		found = temp.find("*");
+		if (found == std::string::npos)
+			temp += "*X^0";
+
+		found = temp.find("*");
+		if (found != std::string::npos)
+		{
+			if (temp.substr(found+1).compare("X^0") == 0)
+			{
+				first += std::stof(temp.substr(0, found));
+				temp = std::to_string(first) + "*X^0";
+			}
+			else if (temp.substr(found+1).compare("X^1") == 0)
+			{
+				sec += std::stof(temp.substr(0, found));
+				temp = std::to_string(sec) + "*X^1";
+			}
+			else if (temp.substr(found+1).compare("X^2") == 0)
+			{
+				third += std::stof(temp.substr(0, found));
+				temp = std::to_string(third) + "*X^2";
+			}
+			else if (temp.substr(found+1).compare("X^3") == 0)
+			{
+				fouth += std::stof(temp.substr(0, found));
+				temp = std::to_string(fouth) + "*X^3";
+				flag = true;
+			}
+			//std::cout << "last " << temp.substr(found+1) << std::endl;
+			//std::cout << "first " << temp.substr(0, found) << std::endl;
+		}
+		//std::cout << "terms = " << temp << std::endl;
+	}
+
+	this->_sortedTerms.push_back(std::to_string(first) + "*X^0");
+	this->_sortedTerms.push_back(std::to_string(sec) + "*X^1");
+	this->_sortedTerms.push_back(std::to_string(third) + "*X^2");
+	if (flag == true)
+		this->_sortedTerms.push_back(std::to_string(fouth) + "*X^3");
+	/*for(std::vector<std::string>::iterator it = this->_sortedTerms.begin(); it != this->_sortedTerms.end(); ++it)
+	{
+		std::cout << "test = " << *it << std::endl;
+	}*/
 
 }
 
@@ -143,22 +194,34 @@ void		Polynomial::sortPolynomialExpression(void)
 		tempIt = *it;
 		std::reverse(tempIt.begin(), tempIt.end());
 		temp.push_back(tempIt);
-		std::cout << "reversed terms = " << tempIt << std::endl;
+		//std::cout << "reversed terms = " << tempIt << std::endl;
 	}
 	std::sort(temp.begin(), temp.end());
 
-	for(std::vector<std::string>::iterator it = this->_sortedTerms.begin(); it != this->_sortedTerms.end(); ++it)
-		std::cout << "sorted 2 terms = " << *it << std::endl;
+	this->_sortedTerms.erase (this->_sortedTerms.begin(), this->_sortedTerms.end());
+	for(std::vector<std::string>::iterator it = temp.begin(); it != temp.end(); ++it)
+	{
+		this->_sortedTerms.push_back(*it);
+		//std::cout << "sorted 2 terms = " << *it << std::endl;
+	}
 
-	tempStr = getTheSameDegreeTerms(temp);
+	//tempStr = getTheSameDegreeTerms(temp);
 
+	/*for(std::vector<std::string>::iterator it = this->_sortedTerms.begin(); it != this->_sortedTerms.end(); ++it)
+	{		
+		tempIt = *it;
+		std::reverse(tempIt.begin(), tempIt.end());
+		std::cout << "test2222 = " << tempIt << std::endl;
+	}*/
+
+	tempStr = this->_sortedTerms;
 	this->_sortedTerms.erase (this->_sortedTerms.begin(), this->_sortedTerms.end());
 	for(unsigned i = tempStr.size(); i-- > 0; )
 	{
 		tempIt = tempStr.at(i);
 		std::reverse(tempIt.begin(), tempIt.end());
 		this->_sortedTerms.push_back(tempIt);
-		std::cout << "reuben moswela = " << tempIt << std::endl;
+		//std::cout << "reuben moswela = " << tempIt << std::endl;
 	}
 }
 
@@ -166,6 +229,7 @@ void		Polynomial::getDegreeOfPolynomial(void)
 {
 	std::string charToFind = "^";
 	std::size_t found = this->_sortedTerms.at(0).find(charToFind);
+	//std::cout << "char " << this->_sortedTerms.at(0) << std::endl;
 	if (found != std::string::npos)
 	{
 		this->_degreeOfPol = this->_sortedTerms.at(0).at(found+1);
@@ -179,11 +243,11 @@ void		Polynomial::getDegreeOfPolynomial(void)
 void		Polynomial::displayDiscriminant(void)
 {
 	if (_discriminant > 0)
-		std::cout << "the discriminant is positive " << _discriminant<< " and two solutions are = " << std::endl;
+		std::cout << "the discriminant is positive " << _discriminant<< " and the solutions are two " << std::endl;
 	else if (_discriminant < 0)
-		std::cout << "the discriminant is negative " << _discriminant << " and the imaginary solution is = " << std::endl;
+		std::cout << "the discriminant is negative " << _discriminant << " and the solution is imaginary" << std::endl;
 	else
-		std::cout << "the discriminant is zero " << _discriminant << " the one solution is = "<< std::endl;
+		std::cout << "the discriminant is " << _discriminant << " and the solution is one "<< std::endl;
 }
 
 void		Polynomial::getDiscriminant(std::string degree)
@@ -199,7 +263,7 @@ void		Polynomial::getDiscriminant(std::string degree)
 		int count = 0;
 		for(std::vector<std::string>::iterator it = this->_sortedTerms.begin(); it != this->_sortedTerms.end(); ++it)
 		{
-			std::cout << "disaster = " << *it << std::endl;
+			//std::cout << "disaster = " << *it << std::endl;
 			temp = *it;
 			found = temp.find("*");
 			found1 = temp.find("^");
@@ -215,7 +279,7 @@ void		Polynomial::getDiscriminant(std::string degree)
 			}
 			count++;
 		}
-		std::cout << "count = " << count << std::endl;
+		//std::cout << "count = " << count << std::endl;
 		_discriminant = solveDiscriminant(tempVec, flag);
 		displayDiscriminant();
 	}
@@ -224,16 +288,16 @@ void		Polynomial::getDiscriminant(std::string degree)
 float 		Polynomial::solveDiscriminant(std::vector<std::string> v, bool flag)
 {
 	int vecSize = v.size();
-	std::cout << "vecSize = " << vecSize << std::endl;
+	/*std::cout << "vecSize = " << vecSize << std::endl;
 	for(std::vector<std::string>::iterator it = v.begin(); it != v.end(); ++it)
-		std::cout << "vector v = " << *it << std::endl;
+		std::cout << "vector v = " << *it << std::endl;*/
 	_a = std::stof(v.at(0));
 
 	if (!v.at(1).empty())
 		_b = std::stof(v.at(1));
 	else
 		_b = 0;
-	std::cout << "b = " << _b << std::endl;
+	//std::cout << "b = " << _b << std::endl;
 
 	if (vecSize == 3)
 		if (!v.at(2).empty())
@@ -248,10 +312,10 @@ float 		Polynomial::solveDiscriminant(std::vector<std::string> v, bool flag)
 		_c = _b;
 		_b = 0;
 	}
-	std::cout << "c = " << _c << std::endl;
+	/*std::cout << "c = " << _c << std::endl;
 	std::cout << "a = " << _a << std::endl;
 	std::cout << "b = " << _b << std::endl;
-	std::cout << "c = " << _c << std::endl;
+	std::cout << "c = " << _c << std::endl;*/
 	return (_b * _b) - (4 * (_a * _c));
 }
 
@@ -269,9 +333,9 @@ std::vector<std::string>		Polynomial::getTheSameDegreeTerms(std::vector<std::str
 		tempStr = *it;
 		found = tempStr.find("*");
 
-		std::cout << "firstPartOfTerm = " << firstPartOfTerm << std::endl;
+		/*std::cout << "firstPartOfTerm = " << firstPartOfTerm << std::endl;
 		std::cout << "lastPartOfTerm = " << lastPartOfTerm << std::endl;
-		std::cout << "tempStr = " << tempStr << std::endl;
+		std::cout << "tempStr = " << tempStr << std::endl;*/
 
 		if (count >= 1 && found != std::string::npos)
 		{
@@ -280,34 +344,32 @@ std::vector<std::string>		Polynomial::getTheSameDegreeTerms(std::vector<std::str
 				hold = firstPartOfTerm;
 				firstTerm = tempStr.substr(found+1);
 
-				std::cout << "numbers to add = " <<  firstTerm << std::endl;
-				std::cout << "numbers to add = " << lastPartOfTerm << std::endl;
+				/*std::cout << "numbers to add = " <<  firstTerm << std::endl;
+				std::cout << "numbers to add = " << lastPartOfTerm << std::endl;*/
 				reverse(firstTerm.begin(),firstTerm.end());
 				reverse(lastPartOfTerm.begin(),lastPartOfTerm.end());
 
-				std::cout << "numbers to add after rev = " <<  firstTerm << std::endl;
-				std::cout << "numbers to add after rev = " <<  lastPartOfTerm << std::endl;
+				/*std::cout << "numbers to add after rev = " <<  firstTerm << std::endl;
+				std::cout << "numbers to add after rev = " <<  lastPartOfTerm << std::endl;*/
 				firstNum = stof(firstTerm);
 				secondNum = stof(lastPartOfTerm);
 				total = firstNum + secondNum;
-				std::cout << "total after rounding = " << total << std::endl;
+				//std::cout << "total after rounding = " << total << std::endl;
 				totalTerm = std::to_string(total);
-				std::cout << "totalTerm = " <<  totalTerm << std::endl;
+				//std::cout << "totalTerm = " <<  totalTerm << std::endl;
 				reverse(totalTerm.begin(),totalTerm.end());
 				if (total > 0)
 					totalTerm = firstPartOfTerm + "*" + totalTerm + "+";
 				else
 					totalTerm = firstPartOfTerm + "*" + totalTerm;
-				std::cout << "totalTerm after reversing = " <<  totalTerm << std::endl;
+				/*std::cout << "totalTerm after reversing = " <<  totalTerm << std::endl;
 				std::cout << "numbers to add after converting = " <<  firstNum << std::endl;
 				std::cout << "numbers to add after converting = " <<  secondNum << std::endl;
-				std::cout << "numbers to add after converting = " <<  total << std::endl;
-				//temp.erase(temp.begin()+ (1 - std::distance(temp.begin(), it)));
-				//temp.erase(temp.begin() + (std::distance(temp.begin(), it)));
+				std::cout << "numbers to add after converting = " <<  total << std::endl;*/
 				vec.push_back(totalTerm);
 
 			}
-			std::cout << "to add = " << tempStr << std::endl;
+			//std::cout << "to add = " << tempStr << std::endl;
 			if (hold.compare(tempStr.substr(0, found - 0)) != 0)
 				vec.push_back(tempStr);
 		}
@@ -319,11 +381,11 @@ std::vector<std::string>		Polynomial::getTheSameDegreeTerms(std::vector<std::str
 			firstPartOfTerm = tempStr.substr(0, found - 0);
 			lastPartOfTerm = tempStr.substr(found+1);
 		}
-		std::cout << "count = " << count << std::endl;
+		//std::cout << "count = " << count << std::endl;
 		count++;
 	}
 
-	std::size_t found1 = totalTerm.find("*");
+	/*std::size_t found1 = totalTerm.find("*");
 	for(std::vector<std::string>::iterator it = vec.begin(); it != vec.end(); ++it)
 	{
 		tempStr = *it;
@@ -335,8 +397,8 @@ std::vector<std::string>		Polynomial::getTheSameDegreeTerms(std::vector<std::str
 				std::cout << "\n"; //<< tempStr << std::endl; 
 			}
 		}
-		std::cout << "new values = " << *it << std::endl;
-	}
+		//std::cout << "new values = " << *it << std::endl;
+	}*/
 	return vec;
 }
 
@@ -353,9 +415,9 @@ void		Polynomial::reducePolynomial(void)
 void		Polynomial::degreeOfTwo(void)
 {
 	int length = this->_sortedTerms.size();
-	std::cout << "length = " << length << std::endl;
+	/*std::cout << "length = " << length << std::endl;
 	for(std::vector<std::string>::iterator it = _sortedTerms.begin(); it != _sortedTerms.end(); ++it)
-		std::cout << "elements = " << *it << std::endl;
+		std::cout << "elements = " << *it << std::endl;*/
 	if (length == 2)
 		inverseOperation();
 	else if (length == 3)
@@ -420,7 +482,7 @@ void		Polynomial::inverseOperation(void)
 	std::cout << "Step 2: " << hold << " = " <<step2 << std::endl;
 	std::cout << "Step 3: " << "√"<< hold << " = √" << std::setprecision(4) << num << std::endl;
 	std::cout << "discriminant = " << _discriminant << std::endl;
-	std::cout << "num = " << num << std::endl;
+	//std::cout << "num = " << num << std::endl;
 	if (_discriminant < 0)
 	{
 		std::cout << "Step 4: " << hold.at(0) << " = √" << "-1*" << num * -1 << std::endl;
@@ -445,7 +507,7 @@ float		Polynomial::calculateRoot(float number)
     while ((root - number / root) > error) //loop until precision satisfied 
         root = (root + number / root) / 2;
 	
-	std::cout << "The Square root is: " << std::setprecision(3) << root << std::endl;
+	//std::cout << "The Square root is: " << std::setprecision(3) << root << std::endl;
     return root;
 }
 
@@ -511,13 +573,13 @@ void		Polynomial::degreeOfZero(void)
 {
 	std::size_t found;
 	std::string temp;
-	float num;
+	float num = 0;
 	for(std::vector<std::string>::iterator it = _sortedTerms.begin(); it != _sortedTerms.end(); ++it)
 	{
 		temp = *it;
 		found = temp.find("*");
 		if (found != std::string::npos)
-			num = std::stof(temp.substr(0, found - 0));
+			num += std::stof(temp.substr(0, found - 0));
 
 	}
 	std::cout << "The solution is: \n";
@@ -526,51 +588,6 @@ void		Polynomial::degreeOfZero(void)
 
 void		Polynomial::factorsOfAConstant(void)
 {
-	/*int length, count, i, sign;
-	float mul, add, sub;
-	std::vector<int> vec;
-
-	sign = _c < 0 ? -1 : 1;
-	std::cout << "sign = " << sign << std::endl;
-	int c = static_cast<int>(_c);
-
-    std::cout << "Factors of " << _c << " are: " << std::endl;  
-    for(i = 1; i <= c; ++i)
-    {
-        if(c % i == 0)
-        {
-            vec.push_back(i);
-            std::cout << i << std::endl;
-        }
-    }
-
-    length = vec.size();
-    std::cout << "length = " << length << std::endl;
-    i = 0;
-    count = 0;
-    while(i < length)
-    {
-        for(std::vector<int>::iterator it = vec.begin(); it != vec.end(); ++it)
-        {
-            mul = (vec.at(i) * *it);
-            add = (vec.at(i) + *it);
-            sub = (vec.at(i) - *it);
-            std::cout << "addition = " << add << std::endl;
-            std::cout << "multiplication = " << mul << std::endl;
-            std::cout << "subtraction = " << sub << std::endl;
-            if (mul == _c && (add == _b || sub == _b))
-            {
-                std::cout << "i got you " << vec.at(i) << " and " << *it << std::endl;
-                count++;
-                break;
-            }
-        }
-
-        if (count == 1)
-            break;
-        i++;
-    }*/
-
     float x1, x2;
 
     x1 = ((-1 * _b) + (calculateRoot(_discriminant))) / (2 * _a);

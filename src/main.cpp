@@ -19,7 +19,6 @@ int main(int argc, char *argv[])
 		pol.getDegreeOfPolynomial();
 		pol.reducePolynomial();
 		pol.solvePolynomial();
-		std::cout << "You have the required arguments\n";
 	}
 	return 0;
 }

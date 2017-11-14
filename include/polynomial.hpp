@@ -34,6 +34,10 @@ class Polynomial
 		void	displayDiscriminant(void);
 		void	inverseOperation(void);
 		float	calculateRoot(float num);
+		void	factorsOfAConstant(void);
+		void	degreeOfTwo();
+		void	degreeOfOne();
+		void	degreeOfZero();
 
 	public:
 		Polynomial(std::string expre);
@@ -47,12 +51,9 @@ class Polynomial
 		void	validatePolynomial(void);
 		void	sortPolynomialExpression(void);
 		void	getDegreeOfPolynomial(void);
-		void	reducePolynomial(void);
-		void	factorsOfAConstant(void);
+		void	reducePolynomial(void);		
 		void	solvePolynomial(void);
-		void	degreeOfTwo();
-		void	degreeOfOne();
-		void	degreeOfZero();
+
 };
 
 #endif
