@@ -17,7 +17,10 @@ int main(int argc, char *argv[])
 		pol.validatePolynomial();
 		pol.sortPolynomialExpression();
 		pol.getDegreeOfPolynomial();
-		pol.reducePolynomial();
+		if (pol.degreeOfPolynomial() > 0)
+			pol.reducePolynomial();
+		if (pol.degreeOfPolynomial() > 2)
+			std::cout << "The polynomial degree is stricly greater than 2, I can't solve.\n";
 		pol.solvePolynomial();
 	}
 	return 0;

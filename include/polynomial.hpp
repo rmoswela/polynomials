@@ -18,10 +18,10 @@ class Polynomial
 		std::string		_degreeOfPol;
 		float			_a, _b, _c, _y1, _y2;
 		std::string		_sign;
-		int				_pos;
+		int				_pos, _length;
 		float 			_discriminant;
 
-		std::vector<std::string> _unsortedTerms;
+		std::vector<std::string> _unsortedTerms, _val;
 		std::vector<std::string> _sortedTerms;
 		std::vector<std::string> _signs;
 		Polynomial();
@@ -53,6 +53,7 @@ class Polynomial
 		void	getDegreeOfPolynomial(void);
 		void	reducePolynomial(void);		
 		void	solvePolynomial(void);
+		int 	degreeOfPolynomial(void);
 
 };
 
